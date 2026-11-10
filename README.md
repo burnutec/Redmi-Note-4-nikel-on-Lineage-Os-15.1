@@ -38,7 +38,7 @@ Not working yet: calls, 3G/LTE, camera, fingerprint, IR blaster
 Proprietary vendor files are not included in this repository.
 
 ## Dev. Notes:
-The lowest end of devices has been used in development, meaning the 2+1GB variants, this proves how capable these devices were,
+The lowest end of devices has been used in development, meaning the 2+16GB variants, this proves how capable these devices were,
 and the real bad decison from Mediatek's part on not supporting this chip longer or at all, as history shows it.
 
 ## Warning
