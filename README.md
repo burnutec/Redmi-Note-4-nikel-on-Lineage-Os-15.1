@@ -19,8 +19,6 @@ Working:
 - Rotation (BMI160), light sensor (LTR-579)
 - Custom boot logo and boot animation
 
-In progress: proximity, compass (YAS537)
-
 ## Status (V12)
 Working:
 - Magnetometer now works , needs refinement.
