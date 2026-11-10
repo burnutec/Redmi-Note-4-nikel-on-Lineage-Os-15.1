@@ -30,3 +30,8 @@ Not working yet: calls, 3G/LTE, camera, fingerprint, IR blaster
 
 ## Note
 Proprietary vendor files are not included in this repository.
+
+## Warning
+Flash at your own risk. Only boot, system (and logo) are written by this ROM.
+Never flash preloader, lk, modem, tee or nvram partitions from other devices.
+Back up nvram/nvdata before trying anything.
