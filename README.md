@@ -22,7 +22,10 @@ Working:
 In progress: proximity, compass (YAS537)
 
 ## Status (V12)
-Magnetometer now works , needs refinement.
+Working:
+- Magnetometer now works , needs refinement.
+- Proximity sensor.
+
 
 
 
