@@ -39,6 +39,10 @@ Not working yet: calls, 3G/LTE, camera, fingerprint, IR blaster
 ## Note
 Proprietary vendor files are not included in this repository.
 
+## Dev. Notes:
+The lowest end of devices has been used in development, meaning the 2+1GB variants, this proves how capable these devices were,
+and the real bad decison from Mediatek's part on not supporting this chip longer or at all, as history shows it.
+
 ## Warning
 Flash at your own risk. Only boot, system (and logo) are written by this ROM.
 Never flash preloader, lk, modem, tee or nvram partitions from other devices.
