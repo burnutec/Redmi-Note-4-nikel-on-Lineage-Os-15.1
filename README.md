@@ -21,6 +21,9 @@ Working:
 
 In progress: proximity, compass (YAS537)
 
+## Status (V12)
+Magnetometer now works , needs refinement.
+
 Not working yet: calls, 3G/LTE, camera, fingerprint, IR blaster
 
 ## Credits
