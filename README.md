@@ -24,8 +24,14 @@ Working:
 - Magnetometer now works , needs refinement.
 - Proximity sensor.
 
+## Status (V13)
+Working:
+- Magnetometer (YAS537): calibrates itself after a figure-8 motion,
+  reads Earth's field correctly (~50 µT)
+- The pressure sensor that SHIFT's sensor program reported is now hidden;
+  the Redmi Note 4 has no barometer
 
-
+Note: after every reboot the compass needs one figure-8 motion before it is accurate.  
 
 Not working yet: calls, 3G/LTE, camera, fingerprint, IR blaster
 
