@@ -33,7 +33,10 @@ Working:
 - Light under the capacitive keys, and its settings
 - IR Blaster now works.  
 
-Note: after every reboot the compass needs one figure-8 motion before it is accurate.  
+Note: after every reboot the compass needs one figure-8 motion before it is accurate.
+
+## Status (V14)
+Adds Fingerprint support.
 
 Not working yet: calls, 3G/LTE, camera, fingerprint, IR blaster
 
