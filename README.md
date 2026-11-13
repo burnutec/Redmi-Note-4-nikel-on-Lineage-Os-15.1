@@ -38,7 +38,7 @@ Note: after every reboot the compass needs one figure-8 motion before it is accu
 ## Status (V14)
 Adds Fingerprint support added , sine the devices was shipped with multiple type of sensors, the rom will do auto detection , development in progress.
 
-Not working yet: calls, 3G/LTE, camera, fingerprint, IR blaster
+Not working yet: calls, 3G/LTE, camera, fingerprint in progress.
 
 ## Credits
 - SHIFTPHONES: kernel and vendor base (SHIFT5me)
