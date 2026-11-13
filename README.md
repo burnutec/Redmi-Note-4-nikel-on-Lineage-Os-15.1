@@ -36,7 +36,7 @@ Working:
 Note: after every reboot the compass needs one figure-8 motion before it is accurate.
 
 ## Status (V14)
-Adds Fingerprint support.
+Adds Fingerprint support added , sine the devices was shipped with multiple type of sensors, the rom will do auto detection , development in progress.
 
 Not working yet: calls, 3G/LTE, camera, fingerprint, IR blaster
 
