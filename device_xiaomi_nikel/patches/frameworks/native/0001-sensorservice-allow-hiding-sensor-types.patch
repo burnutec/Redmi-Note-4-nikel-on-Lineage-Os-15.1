@@ -1,0 +1,44 @@
+diff --git a/services/sensorservice/SensorService.cpp b/services/sensorservice/SensorService.cpp
+index a1f07b2..2e2f17f 100644
+--- a/services/sensorservice/SensorService.cpp
++++ b/services/sensorservice/SensorService.cpp
+@@ -48,6 +48,8 @@
+ #include <math.h>
+ #include <sched.h>
+ #include <stdint.h>
++#include <stdlib.h>
++#include <string.h>
+ #include <sys/socket.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
+@@ -147,9 +149,30 @@ void SensorService::onFirstRef() {
+                     (1<<SENSOR_TYPE_GEOMAGNETIC_ROTATION_VECTOR) |
+                     (1<<SENSOR_TYPE_GAME_ROTATION_VECTOR);
+ 
++            // Sensor types the HAL lists but the device does not have, as a
++            // comma separated list of type numbers (e.g. "6" for pressure).
++            char hiddenTypes[PROPERTY_VALUE_MAX];
++            property_get("ro.sensors.hidden_types", hiddenTypes, "");
++
+             for (ssize_t i=0 ; i<count ; i++) {
+                 bool useThisSensor=true;
+ 
++                if (hiddenTypes[0] != '\0') {
++                    char *save = nullptr;
++                    char buf[PROPERTY_VALUE_MAX];
++                    strlcpy(buf, hiddenTypes, sizeof(buf));
++                    for (char *t = strtok_r(buf, ",", &save); t; t = strtok_r(nullptr, ",", &save)) {
++                        if (atoi(t) == list[i].type) {
++                            ALOGI("hiding sensor '%s' (type %d): ro.sensors.hidden_types",
++                                  list[i].name, list[i].type);
++                            useThisSensor = false;
++                        }
++                    }
++                    if (!useThisSensor) {
++                        continue;
++                    }
++                }
++
+                 switch (list[i].type) {
+                     case SENSOR_TYPE_ACCELEROMETER:
+                         hasAccel = true;
