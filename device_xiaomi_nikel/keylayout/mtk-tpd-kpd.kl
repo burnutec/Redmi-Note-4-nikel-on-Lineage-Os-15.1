@@ -1,0 +1,7 @@
+# Redmi Note 4 (nikel) touch keys below the screen, reported by nikel_ft5346
+# through MediaTek's tpd framework (input device "mtk-tpd-kpd").
+# Codes come from the device tree (tpd-key-local = 139 172 158), verified on the
+# phone: left x=160 -> 139, middle x=540 -> 172, right x=920 -> 158.
+key 139   APP_SWITCH    VIRTUAL
+key 172   HOME          VIRTUAL
+key 158   BACK          VIRTUAL
