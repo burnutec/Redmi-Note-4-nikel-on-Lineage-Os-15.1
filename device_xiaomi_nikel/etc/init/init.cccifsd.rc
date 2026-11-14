@@ -1,0 +1,10 @@
+# nikel: SHIFT's init.cccifsd.rc with the CDMA modem (MD3) file service left out.
+on post-fs-data
+    restorecon_recursive /vendor/protect_f
+    restorecon_recursive /vendor/protect_s
+
+service ccci_fsd /vendor/bin/ccci_fsd 0
+    user radio
+    group radio system
+    class core
+    oneshot

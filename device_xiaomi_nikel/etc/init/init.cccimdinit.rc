@@ -1,0 +1,13 @@
+# nikel: SHIFT's init.cccimdinit.rc with the CDMA modem (MD3) left out.
+# MD3 crashes as soon as call audio starts; nikel runs LTE/WCDMA/GSM on MD1.
+on post-fs-data
+    mkdir /vendor/nvdata/md 0770 root system
+    chown radio radio /sys/kernel/ccci/boot
+    mkdir /data/ccci_cfg 0770 system radio
+    restorecon /data/ccci_cfg
+
+service ccci_mdinit /vendor/bin/ccci_mdinit 0
+    user system
+    group radio system
+    class core
+    oneshot
