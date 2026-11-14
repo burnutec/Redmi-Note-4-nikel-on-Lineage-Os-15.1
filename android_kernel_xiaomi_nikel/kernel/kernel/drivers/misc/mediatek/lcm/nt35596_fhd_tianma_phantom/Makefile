@@ -1,0 +1,6 @@
+#
+# NT35596 FHD Tianma panel - Redmi Note 4 MTK (nikel)
+#
+ccflags-$(CONFIG_MTK_LCM) += -I$(srctree)/drivers/misc/mediatek/lcm/inc
+
+obj-y += nt35596_fhd_tianma_phantom.o

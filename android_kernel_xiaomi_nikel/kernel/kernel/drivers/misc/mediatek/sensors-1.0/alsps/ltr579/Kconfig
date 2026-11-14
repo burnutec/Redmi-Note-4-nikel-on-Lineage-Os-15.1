@@ -1,0 +1,9 @@
+
+config MTK_LTR579
+	bool "LTR-579 ambient light / proximity sensor (nikel)"
+	depends on CUSTOM_KERNEL_ALSPS
+	default n
+	help
+	  Lite-On LTR-579ALS-01 light and proximity sensor on I2C,
+	  as used on the Redmi Note 4 MTK (nikel). Both sensors are
+	  polled by the MediaTek alsps framework.
