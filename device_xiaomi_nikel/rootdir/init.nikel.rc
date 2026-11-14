@@ -93,3 +93,10 @@ on boot
 on post-fs-data
     mkdir /data/fpc 0770 system system
 
+
+# nikel: cameraserver can die while it holds a camera open in the MTK camera
+# HAL (seen at boot). The HAL then keeps that camera marked as open for good
+# ("device@1.0/internal/0 has already been opened") and every later open fails.
+# Restart the HAL together with cameraserver so both start clean.
+on property:init.svc.cameraserver=restarting
+    restart camerahalserver
