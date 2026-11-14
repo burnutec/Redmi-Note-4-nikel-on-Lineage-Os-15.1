@@ -41,6 +41,11 @@ Adds Fingerprint support, since the devices were shipped with multiple type of s
 ## Status (V15)
 Video playback / MDP fixed.
 
+## Status (V16)
+- Fingerprint (FPC1145) works: enroll + unlock. 
+Kernel driver nikel_fpc_irq, MIUI’s HAL behind a 2.1 wrapper.
+Enrollment uses MIUI’s built-in token-check bypass until the hardware gatekeeper/keymaster are in use.
+
 Not working yet: calls, 3G/LTE, camera, fingerprint in progress.
 
 ## Credits
