@@ -1,0 +1,2 @@
+nikel: placeholder installed with the nikel_vendor_mountpoints module, which creates
+the NVRAM mountpoints nvdata, nvcfg, protect_f, protect_s, persist in /system/vendor.
