@@ -45,8 +45,9 @@ Video playback / MDP fixed.
 - Fingerprint (FPC1145) works: enroll + unlock. 
 Kernel driver nikel_fpc_irq, MIUI’s HAL behind a 2.1 wrapper.
 Enrollment uses MIUI’s built-in token-check bypass until the hardware gatekeeper/keymaster are in use.
+On every new reboot PIN or swipe need to be entered , next unlock will unlock by the fingerprint reader.
 
-Not working yet: calls, 3G/LTE, camera, fingerprint in progress.
+Not working yet: calls, 3G/LTE, camera.
 
 ## Credits
 - SHIFTPHONES: kernel and vendor base (SHIFT5me)
