@@ -48,6 +48,7 @@ Enrollment uses MIUI’s built-in token-check bypass until the hardware gatekeep
 On every new reboot PIN or swipe need to be entered , next unlock will unlock by the fingerprint reader.
 
 Not working yet: calls, 3G/LTE, camera.
+4G LTE not supported by the device Baseband yet.
 
 ## Credits
 - SHIFTPHONES: kernel and vendor base (SHIFT5me)
