@@ -1,0 +1,34 @@
+# nikel CW2015 battery profile (backup)
+
+Read from the CW2015 gauge (I2C 1-0062) of a working nikel on 2026-11-08 by the
+read-only driver `nikel_cw2015.c`, registers 0x10..0x4F. This is the profile
+stock loaded into the gauge for nikel's 4100 mAh battery.
+
+- VERSION (0x00): 0x6f
+- CONFIG  (0x08): 0x02 (UFG set: profile loaded, alert threshold 0)
+- MODE    (0x0A): 0x00 (awake, normal)
+- At the time: SOC 96.28 %, VCELL 4379 mV, phone on USB, charger reported "Full"
+  (stock MIUI showed 96 % / 4370 mV "Full" in the same state)
+
+```
+0x10: 17 fd 62 6b 6d 6d 6a 68 63 63 5f 5c 64 52 46 41
+0x20: 33 2e 28 24 24 34 46 4c 17 65 0a 3d 2b 4b 4b 5b
+0x30: 6d 69 66 67 3f 1b 60 66 0d 2e 2c 70 85 98 9a 29
+0x40: 85 8e 91 ae 67 89 b7 70 2f 7d 72 a5 b5 c1 46 ae
+```
+
+As a C array (for a future driver that may need to restore it, for example
+after the battery was disconnected and the gauge lost its profile):
+
+```c
+static const u8 nikel_cw2015_profile[64] = {
+	0x17, 0xfd, 0x62, 0x6b, 0x6d, 0x6d, 0x6a, 0x68, 0x63, 0x63, 0x5f, 0x5c, 0x64, 0x52, 0x46, 0x41,
+	0x33, 0x2e, 0x28, 0x24, 0x24, 0x34, 0x46, 0x4c, 0x17, 0x65, 0x0a, 0x3d, 0x2b, 0x4b, 0x4b, 0x5b,
+	0x6d, 0x69, 0x66, 0x67, 0x3f, 0x1b, 0x60, 0x66, 0x0d, 0x2e, 0x2c, 0x70, 0x85, 0x98, 0x9a, 0x29,
+	0x85, 0x8e, 0x91, 0xae, 0x67, 0x89, 0xb7, 0x70, 0x2f, 0x7d, 0x72, 0xa5, 0xb5, 0xc1, 0x46, 0xae,
+};
+```
+
+The current driver never writes it. Restoring it would only be needed if
+`CONFIG` bit 1 (UFG) ever reads 0, which the driver logs as
+"no battery profile loaded (CONFIG)".
