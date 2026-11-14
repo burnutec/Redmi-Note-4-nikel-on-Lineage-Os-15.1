@@ -64,7 +64,6 @@
 #define TEE_WAIT_MS 30000
 /* boot-time log that survives logcat's pruning of busy system-uid logs */
 #define NIKEL_FP_LOG "/data/fpc/nikel_wrapper.log"
-#define OPEN_RETRY_MS 20000
 #define OPEN_RETRY_STEP_MS 500
 
 struct backend {
@@ -458,22 +457,20 @@ static int wrap_open(const hw_module_t *module, const char *id, hw_device_t **de
 	vmod->dso = handle;
 
 	/*
-	 * The vendor HAL opens its trusted app through mcDriverDaemon, which
-	 * may not be ready yet this early in boot (seen: open fails once, a
-	 * service restart later works). Retry for up to OPEN_RETRY_MS.
+	 * The vendor HAL must succeed on its first open: after a failed open it
+	 * stays broken for the life of the process, and a second open in the same
+	 * process hangs (seen after a data wipe: first open -1, retry never
+	 * returned). So on failure, end the process; init starts the fingerprint
+	 * service again with a fresh copy of the vendor HAL, and that open works
+	 * (seen: open fails once, a service restart later works).
 	 */
-	for (i = 0; ; i++) {
-		vdev = NULL;
-		ret = vmod->methods->open(vmod, id, &vdev);
-		if (!ret && vdev)
-			break;
-		if (i * OPEN_RETRY_STEP_MS >= OPEN_RETRY_MS) {
-			LOGE("%s: open failed: %d, giving up", be->lib, ret);
-			dlclose(handle);
-			return ret ? ret : -ENODEV;
-		}
-		LOGW("%s: open failed: %d, TEE not ready? retry %zu", be->lib, ret, i + 1);
-		usleep(OPEN_RETRY_STEP_MS * 1000);
+	vdev = NULL;
+	ret = vmod->methods->open(vmod, id, &vdev);
+	if (ret || !vdev) {
+		LOGE("%s: open failed: %d, restarting the fingerprint service for a fresh HAL",
+		     be->lib, ret);
+		usleep(OPEN_RETRY_STEP_MS * 1000);	/* no tight restart loop */
+		_exit(1);
 	}
 	vendor = (fingerprint_device_t *)vdev;
 	LOGI("sensor '%s': %s, device version 0x%x", sensor, be->lib,
