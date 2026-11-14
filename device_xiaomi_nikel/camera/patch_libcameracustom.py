@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-# nikel: give the main camera (S5K3L8, sensor ID 0x30c8) an autofocus motor.
+# nikel: binary fixes for SHIFT's camera libraries (see PATCHES below).
+#
+# 1) libcameracustom: give the main camera (S5K3L8, sensor ID 0x30c8) an autofocus motor.
 #
 # SHIFT's libcameracustom.so pairs lens drivers with sensors. Its MAIN lens
 # list has: 0xffff dummy, 0x0258 (IMX258) DW9714AF, 0x3109 (S5K3P9SX) DW9714AF,
@@ -18,6 +20,14 @@ import os, sys
 PATCHES = [
     ("vendor/lib/libcameracustom.so",   0x2b0fc, "4ff41670", "43f2c800"),
     ("vendor/lib64/libcameracustom.so", 0x30274, "094b80d2", "091986d2"),
+    # libcam.hal3a.v3.so (32-bit, the one camerahalserver uses):
+    # LscMgrDefault::getSensorResolution reads the sensor mode count from the
+    # HAL's sensor static info, which is 0 on nikel, so it never asks for the
+    # per-mode crop windows and builds 0x0 lens-shading tables (TSF crash, ISP
+    # stall on capture). va 0xe39e8: ldrb.w r11,[sp,#0x1e9] -> mov.w r11,#5
+    # (S5K3L8 has 5 modes; a mode that does not answer falls back to the
+    # library's own "predefined rule").
+    ("vendor/lib/libcam.hal3a.v3.so",   0xdf9e8, "9df8e9b1", "4ff0050b"),
 ]
 
 root = sys.argv[1]
@@ -25,18 +35,18 @@ rc = 0
 for rel, off, old, new in PATCHES:
     p = os.path.join(root, rel)
     if not os.path.isfile(p):
-        print("libcameracustom patch: missing " + p); rc = 1; continue
+        print("camera blob patch: missing " + p); rc = 1; continue
     with open(p, "rb") as f:
         d = bytearray(f.read())
     cur = d[off:off + 4].hex()
     if cur == new:
-        print("libcameracustom patch: already applied: " + rel)
+        print("camera blob patch: already applied: " + rel)
     elif cur == old:
         d[off:off + 4] = bytes.fromhex(new)
         with open(p, "wb") as f:
             f.write(d)
-        print("libcameracustom patch: applied: " + rel)
+        print("camera blob patch: applied: " + rel)
     else:
-        print("libcameracustom patch: UNEXPECTED BYTES in %s (%s) - not patched, stop and report" % (rel, cur))
+        print("camera blob patch: UNEXPECTED BYTES in %s (%s) - not patched, stop and report" % (rel, cur))
         rc = 1
 sys.exit(rc)
