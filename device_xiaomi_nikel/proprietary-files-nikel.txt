@@ -1,0 +1,85 @@
+# Redmi Note 4 (nikel) - board blobs from stock MIUI V10.2.2.0.MBFCNXM (Android 6.0, MRA58K)
+# Source: the stock-3x64 folder (system/ copied from the MIUI phone). Paths are /system-relative.
+# Format SRC:DEST - nikel's Android 6.0 paths are placed where Oreo/MTK expects them.
+
+# Trustonic t-base 302C (nikel's TEE in tee1/tee2). Bring-up: files only; the
+# daemon stays disabled until the kernel uses CONFIG_TRUSTONIC_TEE_SUPPORT (gud/302c).
+bin/mcDriverDaemon:vendor/bin/mcDriverDaemon
+lib/libMcClient.so:vendor/lib/libMcClient.so
+lib64/libMcClient.so:vendor/lib64/libMcClient.so
+app/mcRegistry/020b0000000000000000000000000000.drbin:vendor/app/mcRegistry/020b0000000000000000000000000000.drbin
+app/mcRegistry/020b0000000000000000000000000000.tlbin:vendor/app/mcRegistry/020b0000000000000000000000000000.tlbin
+app/mcRegistry/020f0000000000000000000000000000.drbin:vendor/app/mcRegistry/020f0000000000000000000000000000.drbin
+app/mcRegistry/020f0000000000000000000000000000.tlbin:vendor/app/mcRegistry/020f0000000000000000000000000000.tlbin
+app/mcRegistry/030b0000000000000000000000000000.drbin:vendor/app/mcRegistry/030b0000000000000000000000000000.drbin
+app/mcRegistry/030b0000000000000000000000000000.tlbin:vendor/app/mcRegistry/030b0000000000000000000000000000.tlbin
+app/mcRegistry/030c0000000000000000000000000000.drbin:vendor/app/mcRegistry/030c0000000000000000000000000000.drbin
+app/mcRegistry/030c0000000000000000000000000000.tlbin:vendor/app/mcRegistry/030c0000000000000000000000000000.tlbin
+app/mcRegistry/04010000000000000000000000000000.tlbin:vendor/app/mcRegistry/04010000000000000000000000000000.tlbin
+app/mcRegistry/04020000000000000000000000000000.drbin:vendor/app/mcRegistry/04020000000000000000000000000000.drbin
+app/mcRegistry/04020000000000000000000000000000.tlbin:vendor/app/mcRegistry/04020000000000000000000000000000.tlbin
+app/mcRegistry/05060000000000000000000000000000.tabin:vendor/app/mcRegistry/05060000000000000000000000000000.tabin
+app/mcRegistry/05070000000000000000000000000000.drbin:vendor/app/mcRegistry/05070000000000000000000000000000.drbin
+app/mcRegistry/05070000000000000000000000000000.tlbin:vendor/app/mcRegistry/05070000000000000000000000000000.tlbin
+app/mcRegistry/05110000000000000000000000000000.tlbin:vendor/app/mcRegistry/05110000000000000000000000000000.tlbin
+app/mcRegistry/05120000000000000000000000000000.drbin:vendor/app/mcRegistry/05120000000000000000000000000000.drbin
+app/mcRegistry/05120000000000000000000000000000.tlbin:vendor/app/mcRegistry/05120000000000000000000000000000.tlbin
+app/mcRegistry/05200000000000000000000000000000.tlbin:vendor/app/mcRegistry/05200000000000000000000000000000.tlbin
+app/mcRegistry/05220000000000000000000000000000.tlbin:vendor/app/mcRegistry/05220000000000000000000000000000.tlbin
+app/mcRegistry/05230000000000000000000000000000.drbin:vendor/app/mcRegistry/05230000000000000000000000000000.drbin
+app/mcRegistry/06040000000000000000000000000000.tlbin:vendor/app/mcRegistry/06040000000000000000000000000000.tlbin
+app/mcRegistry/06090000000000000000000000000000.drbin:vendor/app/mcRegistry/06090000000000000000000000000000.drbin
+app/mcRegistry/06090000000000000000000000000000.tlbin:vendor/app/mcRegistry/06090000000000000000000000000000.tlbin
+app/mcRegistry/06140000000000000000000000000000.tabin:vendor/app/mcRegistry/06140000000000000000000000000000.tabin
+app/mcRegistry/07010000000000000000000000000000.tlbin:vendor/app/mcRegistry/07010000000000000000000000000000.tlbin
+app/mcRegistry/07050000000000000000000000000000.drbin:vendor/app/mcRegistry/07050000000000000000000000000000.drbin
+app/mcRegistry/07050000000000000000000000000000.tlbin:vendor/app/mcRegistry/07050000000000000000000000000000.tlbin
+app/mcRegistry/0706000000000000000000000000004d.tlbin:vendor/app/mcRegistry/0706000000000000000000000000004d.tlbin
+app/mcRegistry/07060000000000000000000000007169.drbin:vendor/app/mcRegistry/07060000000000000000000000007169.drbin
+app/mcRegistry/07060000000000000000000000007169.tlbin:vendor/app/mcRegistry/07060000000000000000000000007169.tlbin
+app/mcRegistry/07061000000000000000000000000000.tlbin:vendor/app/mcRegistry/07061000000000000000000000000000.tlbin
+app/mcRegistry/07070000000000000000000000000000.drbin:vendor/app/mcRegistry/07070000000000000000000000000000.drbin
+app/mcRegistry/07070000000000000000000000000000.tlbin:vendor/app/mcRegistry/07070000000000000000000000000000.tlbin
+app/mcRegistry/070b0000000000000000000000000000.drbin:vendor/app/mcRegistry/070b0000000000000000000000000000.drbin
+app/mcRegistry/070b0000000000000000000000000000.tlbin:vendor/app/mcRegistry/070b0000000000000000000000000000.tlbin
+app/mcRegistry/070c0000000000000000000000000000.drbin:vendor/app/mcRegistry/070c0000000000000000000000000000.drbin
+app/mcRegistry/070c0000000000000000000000000000.tlbin:vendor/app/mcRegistry/070c0000000000000000000000000000.tlbin
+app/mcRegistry/07150000000000000000000000000000.drbin:vendor/app/mcRegistry/07150000000000000000000000000000.drbin
+app/mcRegistry/07150000000000000000000000000000.tlbin:vendor/app/mcRegistry/07150000000000000000000000000000.tlbin
+app/mcRegistry/07890000000000000000000000000000.tlbin:vendor/app/mcRegistry/07890000000000000000000000000000.tlbin
+app/mcRegistry/08020000000000000000000000007169.tlbin:vendor/app/mcRegistry/08020000000000000000000000007169.tlbin
+app/mcRegistry/08030000000000000000000000000000.tlbin:vendor/app/mcRegistry/08030000000000000000000000000000.tlbin
+app/mcRegistry/08090000000000000000000000000000.tlbin:vendor/app/mcRegistry/08090000000000000000000000000000.tlbin
+app/mcRegistry/08110000000000000000000000000000.tlbin:vendor/app/mcRegistry/08110000000000000000000000000000.tlbin
+app/mcRegistry/09010000000000000000000000000000.tlbin:vendor/app/mcRegistry/09010000000000000000000000000000.tlbin
+app/mcRegistry/09150000000000000000000000000000.tlbin:vendor/app/mcRegistry/09150000000000000000000000000000.tlbin
+app/mcRegistry/09160000000000000000000000000000.tlbin:vendor/app/mcRegistry/09160000000000000000000000000000.tlbin
+app/mcRegistry/375dc3aa776811e38c992c27d744d66e.drbin:vendor/app/mcRegistry/375dc3aa776811e38c992c27d744d66e.drbin
+app/mcRegistry/375dc3aa776811e38c992c27d744d66e.tlbin:vendor/app/mcRegistry/375dc3aa776811e38c992c27d744d66e.tlbin
+app/mcRegistry/37b404db11db4fd4af5e846106b1c3d0.tlbin:vendor/app/mcRegistry/37b404db11db4fd4af5e846106b1c3d0.tlbin
+app/mcRegistry/3d08821c33a611e6a1fa089e01c83aa2.tabin:vendor/app/mcRegistry/3d08821c33a611e6a1fa089e01c83aa2.tabin
+app/mcRegistry/40188311faf343488db888ad39496f9a.drbin:vendor/app/mcRegistry/40188311faf343488db888ad39496f9a.drbin
+app/mcRegistry/40188311faf343488db888ad39496f9a.tlbin:vendor/app/mcRegistry/40188311faf343488db888ad39496f9a.tlbin
+app/mcRegistry/4be4f7dc1f2c11e5b5f7727283247c7f.drbin:vendor/app/mcRegistry/4be4f7dc1f2c11e5b5f7727283247c7f.drbin
+app/mcRegistry/4be4f7dc1f2c11e5b5f7727283247c7f.tlbin:vendor/app/mcRegistry/4be4f7dc1f2c11e5b5f7727283247c7f.tlbin
+app/mcRegistry/4be4fd221f2c11e5b5f7727283247c7f.tlbin:vendor/app/mcRegistry/4be4fd221f2c11e5b5f7727283247c7f.tlbin
+app/mcRegistry/584d694641414c98b83c50901da377cc.tabin:vendor/app/mcRegistry/584d694641414c98b83c50901da377cc.tabin
+app/mcRegistry/5a7b770d08d14b8fb00f53de4173145a.drbin:vendor/app/mcRegistry/5a7b770d08d14b8fb00f53de4173145a.drbin
+app/mcRegistry/5a7b770d08d14b8fb00f53de4173145a.tlbin:vendor/app/mcRegistry/5a7b770d08d14b8fb00f53de4173145a.tlbin
+app/mcRegistry/786cc43175194792854b597c5ed338a0.tlbin:vendor/app/mcRegistry/786cc43175194792854b597c5ed338a0.tlbin
+app/mcRegistry/9073f03a9618383bb1856eb3f990babd.drbin:vendor/app/mcRegistry/9073f03a9618383bb1856eb3f990babd.drbin
+app/mcRegistry/9073f03a9618383bb1856eb3f990babd.tlbin:vendor/app/mcRegistry/9073f03a9618383bb1856eb3f990babd.tlbin
+app/mcRegistry/98fb95bcb4bf42d26473eae48690d7ea.tlbin:vendor/app/mcRegistry/98fb95bcb4bf42d26473eae48690d7ea.tlbin
+app/mcRegistry/e5140b3376fa4c63ab18062caab2fb5c.tlbin:vendor/app/mcRegistry/e5140b3376fa4c63ab18062caab2fb5c.tlbin
+app/mcRegistry/e97c270ea5c44c58bcd3384a2fa2539e.tlbin:vendor/app/mcRegistry/e97c270ea5c44c58bcd3384a2fa2539e.tlbin
+app/mcRegistry/gf_ta.axf:vendor/app/mcRegistry/gf_ta.axf
+
+# Consumer IR (IR blaster): MIUI's legacy HAL for MTK's /dev/irtx; wrapped by
+# android.hardware.ir@1.0-impl/-service (device.mk)
+lib/hw/consumerir.mt6797.so:vendor/lib/hw/consumerir.mt6797.so
+lib64/hw/consumerir.mt6797.so:vendor/lib64/hw/consumerir.mt6797.so
+
+# Fingerprint, FPC1145 (TEE). MIUI's HAL 2.0, renamed so only our wrapper
+# (fingerprint.mt6797, HAL 2.1) loads it; its TA is 0401... in mcRegistry.
+lib64/hw/fingerprint.mt6797.so:vendor/lib64/hw/fpc_fingerprint.miui.so
+lib64/lib_fpc_tac_shared.so:vendor/lib64/lib_fpc_tac_shared.so
