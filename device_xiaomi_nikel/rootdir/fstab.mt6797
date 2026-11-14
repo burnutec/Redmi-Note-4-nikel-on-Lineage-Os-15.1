@@ -1,0 +1,23 @@
+# Redmi Note 4 (nikel) fstab - LineageOS 15.1, non-A/B, no vendor partition
+# (/vendor is /system/vendor). Used by init (mount_all /fstab.mt6797) and recovery.
+#
+# The NVRAM partitions (nvdata, nvcfg, protect1, protect2) hold IMEI and radio
+# calibration. They are deliberately NOT listed here: recovery uses this file
+# too and must never be able to wipe or format them. init.nikel.rc mounts them,
+# without any "formattable" behaviour.
+
+#<src>                                                            <mnt_point>  <type> <mnt_flags>                                                <fs_mgr_flags>
+/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/system     /system      ext4   ro,noatime                                                 wait
+/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/cache      /cache       ext4   noatime,nosuid,nodev,noauto_da_alloc,discard               wait,check
+/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/userdata   /data        ext4   noatime,nosuid,nodev,noauto_da_alloc,discard,barrier=0     wait,check,resize,quota,encryptable=/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/metadata
+
+/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/boot       /boot        emmc   defaults                                                   defaults
+/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/recovery   /recovery    emmc   defaults                                                   defaults
+/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/para       /misc        emmc   defaults                                                   defaults
+/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/frp        /persistent  emmc   defaults                                                   defaults
+/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/nvram      /nvram       emmc   defaults                                                   defaults
+/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/proinfo    /proinfo     emmc   defaults                                                   defaults
+
+# microSD (MSDC1) and USB OTG (MUSB, nikel has no XHCI)
+/devices/mtk-msdc.0/11240000.msdc1*                               auto         auto   defaults                                                   voldmanaged=sdcard1:auto,encryptable=userdata
+/devices/platform/mt_usb*                                         auto         auto   defaults                                                   voldmanaged=usbotg:auto

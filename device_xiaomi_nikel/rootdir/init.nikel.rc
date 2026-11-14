@@ -1,0 +1,95 @@
+# Redmi Note 4 (nikel) board init, imported by init.mt6797.rc
+
+# Modem options (ro.boot.opt_*). SHIFT's Oreo LK passes these on the kernel
+# command line; nikel's Marshmallow LK does not, and truncates ours. Without
+# them gsm0710muxd cannot find the modem and the RIL never starts.
+# MD1 = ULWCTG (12). CDMA is switched off: MD3 (C2K) crashes as soon as call
+# audio starts, and nikel is used where there is no CDMA network.
+on early-init
+    setprop ro.boot.opt_md1_support 12
+    setprop ro.boot.opt_md2_support 0
+    setprop ro.boot.opt_md3_support 0
+    setprop ro.boot.opt_md5_support 0
+    setprop ro.boot.opt_eccci_c2k 0
+    setprop ro.boot.opt_c2k_support 0
+    setprop ro.boot.opt_irat_support 0
+    setprop ro.boot.opt_c2k_lte_mode 0
+
+
+on post-fs
+    # NVRAM / calibration partitions. SHIFT's Oreo binaries expect them under
+    # /vendor; the mountpoints are created in system/vendor at build time
+    # (Android.mk: nikel_vendor_mountpoints). Mounted only - never formatted.
+    mount ext4 /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/nvcfg    /vendor/nvcfg     nosuid nodev noatime noauto_da_alloc commit=1 nodelalloc
+    mount ext4 /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/nvdata   /vendor/nvdata    nosuid nodev noatime noauto_da_alloc
+    mount ext4 /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/protect1 /vendor/protect_f nosuid nodev noatime noauto_da_alloc commit=1 nodelalloc
+    mount ext4 /dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/protect2 /vendor/protect_s nosuid nodev noatime noauto_da_alloc commit=1 nodelalloc
+
+on post-fs-data
+    chown system system /vendor/protect_f
+    chmod 0770 /vendor/protect_f
+    chown system system /vendor/protect_s
+    chmod 0770 /vendor/protect_s
+    restorecon_recursive /vendor/protect_f
+    restorecon_recursive /vendor/protect_s
+
+on boot
+    # IR blaster
+    chown system system /dev/irtx
+    chmod 0660 /dev/irtx
+
+    # Goodix fingerprint (nikel stock has gf_ta.axf in mcRegistry)
+    chown system system /dev/goodix_fp
+    chmod 0660 /dev/goodix_fp
+
+    # Notification LED (MTK leds class)
+    chown system system /sys/class/leds/red/brightness
+    chown system system /sys/class/leds/green/brightness
+    chown system system /sys/class/leds/blue/brightness
+    chown system system /sys/class/leds/red/trigger
+    chown system system /sys/class/leds/green/trigger
+    chown system system /sys/class/leds/blue/trigger
+
+    # Display backlight, written by the lights HAL (liblight, runs as system)
+    chown system system /sys/class/leds/lcd-backlight/brightness
+    chmod 0664 /sys/class/leds/lcd-backlight/brightness
+    # Capacitive key backlight (kernel leds-nikel-button)
+    chown system system /sys/class/leds/button-backlight/brightness
+    chmod 0664 /sys/class/leds/button-backlight/brightness
+
+# Trustonic t-base 302c (nikel's TEE, kernel gud/302c). Daemon command line
+# as in MIUI's init.trustonic.rc; the daemon reads its trustlets from the
+# fixed path /system/app/mcRegistry (a link to /vendor/app/mcRegistry, see
+# mcregistry/Android.mk).
+on fs
+    mkdir /data/app/mcRegistry 0775 system system
+    mkdir /data/app/mcRegistry/TbStorage 0775 system system
+    chmod 0600 /dev/mobicore
+    chown system system /dev/mobicore
+    chmod 0666 /dev/mobicore-user
+    chown system system /dev/mobicore-user
+    chmod 0666 /dev/t-base-tui
+    chown system system /dev/t-base-tui
+
+# after mount_all (on fs, init.mt6797.rc), so /vendor/bin is there
+on post-fs
+    start mobicore
+
+service mobicore /vendor/bin/mcDriverDaemon -r /system/app/mcRegistry/020f0000000000000000000000000000.drbin -r /system/app/mcRegistry/05120000000000000000000000000000.drbin -r /system/app/mcRegistry/070b0000000000000000000000000000.drbin -r /system/app/mcRegistry/020b0000000000000000000000000000.drbin -r /system/app/mcRegistry/05070000000000000000000000000000.drbin -r /system/app/mcRegistry/04020000000000000000000000000000.drbin -r /system/app/mcRegistry/05230000000000000000000000000000.drbin
+    class core
+    user system
+    group system
+    oneshot
+
+# Fingerprint (FPC1145, TEE). MIUI's HAL reads /sys/bus/platform/devices/
+# soc:fpc_interrupt@0 (kernel nikel_fpc_irq) and keeps data in /data/fpc.
+on boot
+    chown system system /sys/bus/platform/devices/soc:fpc_interrupt@0/irq
+    chown system system /sys/bus/platform/devices/soc:fpc_interrupt@0/wakeup_enable
+    chown system system /sys/bus/platform/devices/soc:fpc_interrupt@0/reset
+    chown system system /sys/bus/platform/devices/soc:fpc_interrupt@0/hw_reset
+    chown system system /sys/bus/platform/devices/soc:fpc_interrupt@0/clk_enable
+
+on post-fs-data
+    mkdir /data/fpc 0770 system system
+
