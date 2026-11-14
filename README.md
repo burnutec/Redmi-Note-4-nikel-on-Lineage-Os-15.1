@@ -38,6 +38,9 @@ Note: after every reboot the compass needs one figure-8 motion before it is accu
 ## Status (V14)
 Adds Fingerprint support, since the devices were shipped with multiple type of sensors, the rom will do auto detection , development in progress.
 
+## Status (V15)
+Video playback / MDP fixed.
+
 Not working yet: calls, 3G/LTE, camera, fingerprint in progress.
 
 ## Credits
