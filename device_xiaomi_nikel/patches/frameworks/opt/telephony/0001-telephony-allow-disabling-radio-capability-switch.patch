@@ -1,0 +1,26 @@
+diff --git a/src/java/com/android/internal/telephony/ProxyController.java b/src/java/com/android/internal/telephony/ProxyController.java
+index f6d42af..1988d41 100644
+--- a/src/java/com/android/internal/telephony/ProxyController.java
++++ b/src/java/com/android/internal/telephony/ProxyController.java
+@@ -22,6 +22,7 @@ import android.os.AsyncResult;
+ import android.os.Handler;
+ import android.os.Message;
+ import android.os.PowerManager;
++import android.os.SystemProperties;
+ import android.os.PowerManager.WakeLock;
+ import android.telephony.RadioAccessFamily;
+ import android.telephony.Rlog;
+@@ -217,6 +218,13 @@ public class ProxyController {
+         if (rafs.length != mPhones.length) {
+             throw new RuntimeException("Length of input rafs must equal to total phone count");
+         }
++        // Devices whose vendor RIL cannot do AOSP radio capability switching
++        // (e.g. MediaTek RILs without MediaTek's telephony framework) end up
++        // in an endless radio-off loop. They can opt out with this property.
++        if (SystemProperties.getBoolean("ro.telephony.disable_rc_switch", false)) {
++            logd("setRadioCapability: disabled by ro.telephony.disable_rc_switch");
++            return true;
++        }
+         // Check if there is any ongoing transaction and throw an exception if there
+         // is one as this is a programming error.
+         synchronized (mSetRadioAccessFamilyStatus) {
