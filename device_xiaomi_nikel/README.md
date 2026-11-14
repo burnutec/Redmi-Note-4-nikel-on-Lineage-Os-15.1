@@ -1,53 +1,76 @@
-# Device tree for Redmi Note 4 MTK (nikel) - LineageOS 15.1
+# Redmi-Note-4-nikel-on-Lineage-Os-15.1
+This project aims at resurrecting a long forgotten phone with a very capable SOC.
 
-| | |
-|---:|:---|
-| SoC | MediaTek Helio X20 (MT6797), Mali-T880 MP4 |
-| Display | 5.5" 1080x1920, Tianma NT35596 (others not ported) |
-| Touch | FocalTech FT5x46 (id 0x54) + 3 capacitive keys |
-| Charger / gauge | TI BQ24296 / CellWise CW2015, 4100 mAh |
-| TEE | Trustonic t-base 302C |
-| Shipped | MIUI, Android 6.0 |
+# LineageOS 15.1 for Redmi Note 4 MTK (nikel)
 
-## Where things come from
+Unofficial port of LineageOS 15.1 (Android 8.1) to the Xiaomi Redmi Note 4
+MediaTek version (codename nikel, MT6797 Helio X20).
 
-| Part | Source |
-|---|---|
-| Kernel | SHIFT's MT6797 Oreo kernel (`shift-8.0-mtk`) + nikel drivers, built separately, used as `prebuilt/Image.gz-dtb` |
-| SoC userspace (HALs, GPU, CONSYS, RIL, audio, media) | SHIFT5me ShiftOS 8.1 vendor image -> `proprietary-files.txt` (1150 files; 125 left out, each with a reason in `proprietary-files.excluded.txt`) |
-| Trustonic TEE files, IR HAL, FPC fingerprint HAL | nikel stock MIUI V10.2.2.0.MBFCNXM -> `proprietary-files-nikel.txt` |
-| Fingerprint | `fingerprint/`: our HAL 2.1 wrapper around MIUI's HAL 2.0; picks the vendor HAL from `ro.boot.fpsensor` (set by nikel's bootloader). FPC wired up; Goodix/Leadcore later |
-| Init scripts | SHIFT's `vendor/etc/init/hw/*.rc` moved into the ramdisk (`rootdir/`), nikel's own `fstab.mt6797`, `init.nikel.rc`, `init.project.rc` |
-| HIDL manifest | SHIFT's, minus boot control, camera, keymaster/gatekeeper |
+## Goal
+A daily-usable Android 8.1 for nikel, built on SHIFTPHONES' open
+MT6797 Oreo kernel, with nikel's own drivers ported on top.
 
-## Layout decisions
+## Status (V11)
+Working:
+- Display, touch, capacitive keys, notification LED
+- Sound (speaker, headphones), microphone
+- Wi-Fi, Bluetooth, charging, MTP, GPU
+- SIM, network registration, 2G data, IMEI/baseband
+- Rotation (BMI160), light sensor (LTR-579)
+- Custom boot logo and boot animation
 
-- **Non-Treble, vendor inside /system** (`TARGET_COPY_OUT_VENDOR := system/vendor`).
-  No partition is changed. Because /vendor is not mounted when init and ueventd
-  start, SHIFT's `init/hw/*.rc` and `ueventd.rc` are copied into the ramdisk.
-- **NVRAM partitions are never formattable.** They are not in the fstab at all
-  (recovery uses it too); `init.nikel.rc` mounts them at the /vendor paths
-  SHIFT's binaries expect. Mountpoints are created in the system image.
-- **Bring-up settings:** SELinux permissive, `ro.adb.secure=0`, software
-  keystore/gatekeeper, camera HAL not started. All to be tightened later.
+## Status (V12)
+Working:
+- Magnetometer now works , needs refinement.
+- Proximity sensor.
 
-## Build
+## Status (V13)
+Working:
+- Magnetometer (YAS537): calibrates itself after a figure-8 motion,
+  reads Earth's field correctly (~50 µT)
+- The pressure sensor that SHIFT's sensor program reported is now hidden;
+  the Redmi Note 4 has no barometer
+- Light under the capacitive keys, and its settings
+- IR Blaster now works.  
 
-See `NIKEL-LINEAGE-BUILD.md` and `nikel_lineage_build.sh` in the project folder.
+Note: after every reboot the compass needs one figure-8 motion before it is accurate.
 
-## Never flash
+## Status (V14)
+Adds Fingerprint support, since the devices were shipped with multiple type of sensors. 
+The rom only supports the FPC1145 sensor for now.
 
-preloader, lk/lk2, md1img/md1dsp/md1arm7/md3img, tee1/tee2, scp1/scp2, nvram,
-nvdata, nvcfg, proinfo, protect1/protect2.
+## Status (V15)
+Video playback / MDP fixed.
 
-## Camera
+## Status (V16)
+- Fingerprint (FPC1145) works: enroll + unlock. 
+Kernel driver nikel_fpc_irq, MIUI’s HAL behind a 2.1 wrapper.
+Enrollment uses MIUI’s built-in token-check bypass until the hardware gatekeeper/keymaster are in use.
+On every new reboot PIN or swipe need to be entered , next unlock will unlock by the fingerprint reader.
 
-- HAL: SHIFT's `camerahalserver` (HAL1 device@1.0 behind `ICameraProvider/internal/0`), now in
-  `proprietary-files.txt` and `manifest.xml`.
-- Sensors: the kernel lists them in SHIFT's slot order (see the kernel overlay README, patch 0013),
-  so the HAL uses SHIFT's S5K3L8 tuning for the main camera and the S5K3P9SX slot for the front S5K5E8YX.
-- Lens shading is switched off in `system.prop` (`debug.lsc_mgr.manual_tsf=0`, `debug.lsc_mgr.enable=0`):
-  the shading manager gets a 0x0 sensor crop window, which crashes TSF and stalls the ISP. To do: find
-  why the crop comes back empty, then remove both lines.
-- Autofocus: `camera/patch_libcameracustom.py`, run by `extract-files.sh`, gives the main camera's
-  sensor (S5K3L8, 0x30c8) the DW9714AF lens driver in SHIFT's lens list (on SHIFT the S5K3L8 is a front camera).
+## Status (V17)
+Camera, flash , Front Camera works.
+Flash as Flashlight works.
+No AutoFocus yet, in progress.
+Fingerptint reader now survives Wipes and Reboots.
+
+Not working yet: calls, 3G/LTE.
+
+## Credits
+- SHIFTPHONES: kernel and vendor base (SHIFT5me)
+- LineageOS project
+- Mainline Linux yamaha-yas530 driver (YAS537 support)
+- IR Blaster fix from Ruben's nikel defconfig
+
+## Note
+Proprietary vendor files are not included in this repository.
+
+## Dev. Notes:
+The lowest end of devices has been used in development, meaning the 2+16GB and 3+32GB variants, this proves how capable these devices were,
+and the poor decison from Mediatek's part on not supporting this chip longer or at all, as history shows it.
+Planned for later: Aquire 4+64GB high end model for testing.
+
+## Warning
+Flash at your own risk. Only boot, system (and logo) are written by this ROM.
+Never flash preloader, lk, modem, tee or nvram partitions from other devices.
+Back up nvram/nvdata before trying anything.
