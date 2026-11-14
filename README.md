@@ -47,7 +47,12 @@ Kernel driver nikel_fpc_irq, MIUI’s HAL behind a 2.1 wrapper.
 Enrollment uses MIUI’s built-in token-check bypass until the hardware gatekeeper/keymaster are in use.
 On every new reboot PIN or swipe need to be entered , next unlock will unlock by the fingerprint reader.
 
-Not working yet: calls, 3G/LTE, camera.
+## Status (V17)
+Camera , Front Camera works With Flash.
+Flash as Flashlight works.
+No AutoFocus yet, in progress.
+
+Not working yet: calls, 3G/LTE.
 4G LTE not supported by the device Baseband yet.
 
 ## Credits
