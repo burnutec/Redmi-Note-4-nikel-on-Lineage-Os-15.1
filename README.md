@@ -36,7 +36,8 @@ Working:
 Note: after every reboot the compass needs one figure-8 motion before it is accurate.
 
 ## Status (V14)
-Adds Fingerprint support, since the devices were shipped with multiple type of sensors, the rom will do auto detection , development in progress.
+Adds Fingerprint support, since the devices were shipped with multiple type of sensors. 
+The rom only supports the FPC1145 sensor for now.
 
 ## Status (V15)
 Video playback / MDP fixed.
@@ -48,17 +49,18 @@ Enrollment uses MIUI’s built-in token-check bypass until the hardware gatekeep
 On every new reboot PIN or swipe need to be entered , next unlock will unlock by the fingerprint reader.
 
 ## Status (V17)
-Camera , Front Camera works With Flash.
+Camera, flash , Front Camera works.
 Flash as Flashlight works.
 No AutoFocus yet, in progress.
+Fingerptint reader now survives Wipes and Reboots.
 
 Not working yet: calls, 3G/LTE.
-4G LTE not supported by the device Baseband yet.
 
 ## Credits
 - SHIFTPHONES: kernel and vendor base (SHIFT5me)
 - LineageOS project
 - Mainline Linux yamaha-yas530 driver (YAS537 support)
+- IR Blaster fix from Ruben's nikel defconfig
 
 ## Note
 Proprietary vendor files are not included in this repository.
