@@ -143,7 +143,10 @@ JSEC
     set -e
     if [ "$rc" -eq 0 ] && ls out/target/product/nikel/lineage-15.1-*-nikel.zip >/dev/null 2>&1; then
         echo; echo "BUILD OK:"; ls -l out/target/product/nikel/lineage-15.1-*-nikel.zip
-        echo "Do not flash yet - send the result first."
+        # Copy the new zip next to this script, so an older copy there is
+        # never installed by mistake, and show both so the times can be compared.
+        cp -f out/target/product/nikel/lineage-15.1-*-nikel.zip "$HERE/"
+        echo "Copied to the project folder:"; ls -l "$HERE"/lineage-15.1-*-nikel.zip
     else
         echo; echo "BUILD FAILED (exit $rc). Log: $HERE/lineage-build.log"
         grep -nE "error:|FAILED:|Error [0-9]" "$HERE/lineage-build.log" | tail -20
