@@ -1,0 +1,53 @@
+diff --git a/drivers/misc/mediatek/power/mt6797/Makefile b/drivers/misc/mediatek/power/mt6797/Makefile
+--- a/drivers/misc/mediatek/power/mt6797/Makefile
++++ b/drivers/misc/mediatek/power/mt6797/Makefile
+@@ -32,7 +32,7 @@
+                obj-$(CONFIG_MTK_SMART_BATTERY) += ncp1854.o charging_hw_ncp1854.o
+           else
+                ifeq ($(CONFIG_MTK_BQ24296_SUPPORT),y)
+-                    obj-$(CONFIG_MTK_SMART_BATTERY) += bq24296.o charging_hw_bq24296.o
++                    obj-$(CONFIG_MTK_SMART_BATTERY) += bq24296.o charging_hw_bq24296.o nikel_cw2015.o
+                else
+                     ifeq ($(CONFIG_MTK_FAN5405_SUPPORT),y)
+                         obj-$(CONFIG_MTK_SMART_BATTERY) += fan5405.o charging_hw_fan5405.o
+diff --git a/drivers/power/mediatek/battery_meter.c b/drivers/power/mediatek/battery_meter.c
+--- a/drivers/power/mediatek/battery_meter.c
++++ b/drivers/power/mediatek/battery_meter.c
+@@ -3382,7 +3382,7 @@
+ }
+ #endif				/* #if defined(FG_BAT_INT) */
+ 
+-signed int battery_meter_get_battery_percentage(void)
++static signed int mtk_battery_meter_get_battery_percentage(void)
+ {
+ #if defined(CONFIG_POWER_EXT)
+ 	return 50;
+@@ -3431,6 +3431,28 @@
+ }
+ 
+ 
++#if defined(CONFIG_MTK_BQ24296_SUPPORT)
++/* nikel: battery percentage from the CW2015 gauge (nikel_cw2015.c, read-only) */
++extern int nikel_cw2015_get_soc(int *soc, int mtk_soc);
++#endif
++
++/*
++ * nikel: MediaTek's algorithm always runs (keeps its coulomb-counter state
++ * consistent); when the CW2015 reports a valid value, that value is used, as
++ * on stock nikel. Otherwise MediaTek's own percentage is returned unchanged.
++ */
++signed int battery_meter_get_battery_percentage(void)
++{
++	signed int mtk_soc = mtk_battery_meter_get_battery_percentage();
++#if defined(CONFIG_MTK_BQ24296_SUPPORT) && !defined(CONFIG_POWER_EXT)
++	int cw_soc;
++
++	if (nikel_cw2015_get_soc(&cw_soc, mtk_soc) == 0)
++		return cw_soc;
++#endif
++	return mtk_soc;
++}
++
+ signed int battery_meter_initial(void)
+ {
+ #if defined(CONFIG_POWER_EXT)

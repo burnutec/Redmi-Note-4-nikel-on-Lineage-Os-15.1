@@ -1,0 +1,134 @@
+diff --git a/drivers/misc/mediatek/lens/main/Makefile b/drivers/misc/mediatek/lens/main/Makefile
+index 578fdb39..f7e7eac6 100644
+--- a/drivers/misc/mediatek/lens/main/Makefile
++++ b/drivers/misc/mediatek/lens/main/Makefile
+@@ -30,6 +30,10 @@ else
+   subdir-ccflags-y += -I$(MTK_CUSTOM_PATH)/lens/main/common/bu63169af/inc
+ endif
+ 
++ifeq ($(ARCH_MTK_PROJECT),nikel)
++  ccflags-y += -DNIKEL_AF_DW9718
++endif
++
+ obj-$(CONFIG_MTK_LENS)    += mainaf.o
+ 
+ mainaf-y  += main_lens.o
+diff --git a/drivers/misc/mediatek/lens/main/common/dw9718af/DW9718AF.c b/drivers/misc/mediatek/lens/main/common/dw9718af/DW9718AF.c
+index 40a506b4..b2beb264 100644
+--- a/drivers/misc/mediatek/lens/main/common/dw9718af/DW9718AF.c
++++ b/drivers/misc/mediatek/lens/main/common/dw9718af/DW9718AF.c
+@@ -26,7 +26,18 @@
+ 
+ 
+ #define AF_DRVNAME "DW9718AF_DRV"
++#ifdef NIKEL_AF_DW9718
++/*
++ * nikel: the main camera's motor as Xiaomi drives it as "DW9718AF" (stock
++ * MIUI kernel): 7-bit I2C address 0x0c, control 0x02, position in
++ * 0x03 (MSB) / 0x04 (LSB), mode 0x06, timing 0x07. (0x0e is Xiaomi's
++ * "DW9714AF" for other modules.)
++ */
++#define AF_I2C_SLAVE_ADDR        0x18
++#define NIKEL_AF_REG_POS         0x03
++#else
+ #define AF_I2C_SLAVE_ADDR        0x18
++#endif
+ 
+ #define AF_DEBUG
+ #ifdef AF_DEBUG
+@@ -51,8 +62,11 @@ static int i2c_read(u8 a_u2Addr, u8 *a_puBuff)
+ 	int i4RetValue = 0;
+ 	char puReadCmd[1] = { (char)(a_u2Addr) };
+ 
++#ifdef NIKEL_AF_DW9718
++	g_pstAF_I2Cclient->addr = AF_I2C_SLAVE_ADDR >> 1;
++#endif
+ 	i4RetValue = i2c_master_send(g_pstAF_I2Cclient, puReadCmd, 1);
+-	if (i4RetValue != 2) {
++	if (i4RetValue != 1) {
+ 		LOG_INF(" I2C write failed!!\n");
+ 		return -1;
+ 	}
+@@ -77,7 +91,11 @@ static u8 read_data(u8 addr)
+ 
+ static int s4DW9718AF_ReadReg(unsigned short *a_pu2Result)
+ {
++#ifdef NIKEL_AF_DW9718
++	*a_pu2Result = (read_data(NIKEL_AF_REG_POS) << 8) + (read_data(NIKEL_AF_REG_POS + 1) & 0xff);
++#else
+ 	*a_pu2Result = (read_data(0x02) << 8) + (read_data(0x03) & 0xff);
++#endif
+ 
+ 	return 0;
+ }
+@@ -86,7 +104,11 @@ static int s4AF_WriteReg(u16 a_u2Data)
+ {
+ 	int i4RetValue = 0;
+ 
++#ifdef NIKEL_AF_DW9718
++	char puSendCmd[3] = { NIKEL_AF_REG_POS, (char)(a_u2Data >> 8), (char)(a_u2Data & 0xFF) };
++#else
+ 	char puSendCmd[3] = { 0x02, (char)(a_u2Data >> 8), (char)(a_u2Data & 0xFF) };
++#endif
+ 
+ 	g_pstAF_I2Cclient->addr = AF_I2C_SLAVE_ADDR;
+ 
+@@ -126,11 +148,25 @@ static inline int getAFInfo(__user struct stAF_MotorInfo *pstMotorInfo)
+ 
+ static void initdrv(void)
+ {
++#ifdef NIKEL_AF_DW9718
++	/* stock MIUI DW9718AF_Open: ring control on, mode, timing */
++	char puSendCmd1[2] = { 0x02, 0x02 };
++	char puSendCmd2[2] = { 0x06, 0xA1 };
++	char puSendCmd3[2] = { 0x07, 0x25 };
++
++	g_pstAF_I2Cclient->addr = AF_I2C_SLAVE_ADDR >> 1;
++	if (i2c_master_send(g_pstAF_I2Cclient, puSendCmd1, 2) != 2)
++		LOG_INF("init: I2C send failed\n");
++	i2c_master_send(g_pstAF_I2Cclient, puSendCmd2, 2);
++	i2c_master_send(g_pstAF_I2Cclient, puSendCmd3, 2);
++	udelay(100);
++#else
+ 	char puSendCmd2[2] = { 0x01, 0x39 };
+ 	char puSendCmd3[2] = { 0x05, 0x65 };
+ 
+ 	i2c_master_send(g_pstAF_I2Cclient, puSendCmd2, 2);
+ 	i2c_master_send(g_pstAF_I2Cclient, puSendCmd3, 2);
++#endif
+ }
+ 
+ 
+@@ -174,7 +210,9 @@ static inline int moveAF(unsigned long a_u4Position)
+ 	g_u4TargetPosition = a_u4Position;
+ 	spin_unlock(g_pAF_SpinLock);
+ 
+-	/* LOG_INF("move [curr] %d [target] %d\n", g_u4CurrPosition, g_u4TargetPosition); */
++#ifdef NIKEL_AF_DW9718
++	LOG_INF("move [curr] %lu [target] %lu\n", g_u4CurrPosition, g_u4TargetPosition);
++#endif
+ 
+ 
+ 	if (s4AF_WriteReg((unsigned short)g_u4TargetPosition) == 0) {
+diff --git a/drivers/misc/mediatek/lens/main/main_lens.c b/drivers/misc/mediatek/lens/main/main_lens.c
+index 0765b8f9..cbd816aa 100644
+--- a/drivers/misc/mediatek/lens/main/main_lens.c
++++ b/drivers/misc/mediatek/lens/main/main_lens.c
+@@ -82,7 +82,17 @@ static struct stAF_DrvList g_stAF_DrvList[MAX_NUM_OF_LENS] = {
+ 		AFDRV_BU63169AF, BU63169AF_SetI2Cclient, BU63169AF_Ioctl, BU63169AF_Release
+ 		#endif
+ 	},
++#ifdef NIKEL_AF_DW9718
++	/*
++	 * nikel: SHIFT's camera HAL only knows the name "DW9714AF" for the
++	 * main camera, but nikel's S5K3L8 module has a DW9718 (stock MIUI lens
++	 * table: sensor 0x30c8 -> DW9718AF). Same I2C address, different
++	 * protocol, so serve that name with the DW9718 driver.
++	 */
++	{1, AFDRV_DW9714AF, DW9718AF_SetI2Cclient, DW9718AF_Ioctl, DW9718AF_Release},
++#else
+ 	{1, AFDRV_DW9714AF, DW9714AF_SetI2Cclient, DW9714AF_Ioctl, DW9714AF_Release},
++#endif
+ 	{1, AFDRV_DW9718SAF, DW9718SAF_SetI2Cclient, DW9718SAF_Ioctl, DW9718SAF_Release},
+ 	{1, AFDRV_DW9719TAF, DW9719TAF_SetI2Cclient, DW9719TAF_Ioctl, DW9719TAF_Release},
+ 	{1, AFDRV_LC898212XDAF, LC898212XDAF_SetI2Cclient, LC898212XDAF_Ioctl, LC898212XDAF_Release},

@@ -1,0 +1,18 @@
+--- a/drivers/misc/mediatek/lcm/mt65xx_lcm_list.c	2026-11-08 17:34:30.625848672 +0100
++++ b/drivers/misc/mediatek/lcm/mt65xx_lcm_list.c	2026-11-08 17:34:30.640927336 +0100
+@@ -33,7 +33,15 @@
+ #define LCD_DEBUG(fmt, args...)  pr_debug("[KERNEL/LCM]"fmt, ##args)
+ #endif
+ 
++#if defined(NT35596_FHD_TIANMA_PHANTOM)
++/* Redmi Note 4 MTK (nikel), Tianma panel */
++extern LCM_DRIVER nt35596_fhd_tianma_phantom_lcm_drv;
++#endif
++
+ LCM_DRIVER *lcm_driver_list[] = {
++#if defined(NT35596_FHD_TIANMA_PHANTOM)
++	&nt35596_fhd_tianma_phantom_lcm_drv,
++#endif
+ #if defined(FT8716_FHD_DSI_CMD_SHIFT5ME)
+ 	&ft8716_fhd_dsi_cmd_shift5me_lcm_drv,
+ #endif

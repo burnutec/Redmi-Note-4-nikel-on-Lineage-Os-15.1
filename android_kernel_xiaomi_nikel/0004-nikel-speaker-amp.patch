@@ -1,0 +1,78 @@
+diff --git a/sound/soc/mediatek/mt6797/AudDrv_Gpio.c b/sound/soc/mediatek/mt6797/AudDrv_Gpio.c
+index 8265b23..031a4c1 100644
+--- a/sound/soc/mediatek/mt6797/AudDrv_Gpio.c
++++ b/sound/soc/mediatek/mt6797/AudDrv_Gpio.c
+@@ -49,6 +49,8 @@
+  *****************************************************************************/
+ #include <linux/gpio.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/delay.h>
++#include <linux/mutex.h>
+ #include "AudDrv_Gpio.h"
+ #ifndef CONFIG_PINCTRL_MT6797
+ #include <mt-plat/mt_gpio.h>
+@@ -133,6 +135,17 @@ static struct audio_gpio_attr aud_gpios[GPIO_NUM] = {
+ 
+ static unsigned int extbuck_fan53526_exist;
+ 
++/*
++ * nikel: the speaker amplifier enable pin (GPIO71) comes from the board DT as
++ * pinctrl states "aud_extamp_high"/"aud_extamp_low". SHIFT's driver has its
++ * own speaker PA code (CONFIG_SHIFT5ME_PROJECT) and disabled the generic MTK
++ * ext-amp states, so nikel's speaker stayed off. Missing states = no-op.
++ */
++#ifdef CONFIG_PINCTRL_MT6797
++static struct pinctrl_state *nikel_extamp_high, *nikel_extamp_low;
++static DEFINE_MUTEX(nikel_extamp_mutex);
++#endif
++
+ void AudDrv_GPIO_probe(void *dev)
+ {
+ #ifdef CONFIG_PINCTRL_MT6797
+@@ -163,6 +176,17 @@ void AudDrv_GPIO_probe(void *dev)
+ 			aud_gpios[GPIO_HPDEPOP_LOW].name);
+ 	}
+ 
++	nikel_extamp_high = pinctrl_lookup_state(pinctrlaud, "aud_extamp_high");
++	nikel_extamp_low = pinctrl_lookup_state(pinctrlaud, "aud_extamp_low");
++	if (IS_ERR(nikel_extamp_high) || IS_ERR(nikel_extamp_low)) {
++		nikel_extamp_high = NULL;
++		nikel_extamp_low = NULL;
++		pr_warn("%s(), no aud_extamp states\n", __func__);
++	} else {
++		pinctrl_select_state(pinctrlaud, nikel_extamp_low);
++		pr_warn("%s(), nikel speaker amp states found\n", __func__);
++	}
++
+ 	for (i = 0; i < ARRAY_SIZE(aud_gpios); i++) {
+ 		aud_gpios[i].gpioctrl = pinctrl_lookup_state(pinctrlaud, aud_gpios[i].name);
+ 		if (IS_ERR(aud_gpios[i].gpioctrl)) {
+@@ -431,6 +455,28 @@ int AudDrv_GPIO_EXTAMP_Select(int bEnable, int mode)
+ {
+ 	int retval = 0;
+ 
++#ifdef CONFIG_PINCTRL_MT6797
++	if (nikel_extamp_high && nikel_extamp_low) {
++		/* AW8736-style amp: N rising edges select mode N (default 3) */
++		int i, pulses = (mode == 1 || mode == 2) ? mode : 3;
++
++		pr_warn("nikel: speaker amp %s (mode %d)\n", bEnable ? "on" : "off", pulses);
++		mutex_lock(&nikel_extamp_mutex);
++		if (bEnable) {
++			for (i = 0; i < pulses; i++) {
++				pinctrl_select_state(pinctrlaud, nikel_extamp_low);
++				udelay(2);
++				pinctrl_select_state(pinctrlaud, nikel_extamp_high);
++				udelay(2);
++			}
++		} else {
++			pinctrl_select_state(pinctrlaud, nikel_extamp_low);
++		}
++		mutex_unlock(&nikel_extamp_mutex);
++		return 0;
++	}
++#endif
++
+ #if 0
+ 	int extamp_mode;
+ 	int i;

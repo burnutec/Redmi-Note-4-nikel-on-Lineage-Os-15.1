@@ -1,0 +1,22 @@
+diff --git a/drivers/misc/mediatek/ccci_util/ccci_util_lib_sys.c b/drivers/misc/mediatek/ccci_util/ccci_util_lib_sys.c
+index 58c3d99..cc71b70 100644
+--- a/drivers/misc/mediatek/ccci_util/ccci_util_lib_sys.c
++++ b/drivers/misc/mediatek/ccci_util/ccci_util_lib_sys.c
+@@ -281,6 +281,17 @@ static ssize_t kcfg_setting_show(char *buf)
+ 		curr += actual_write;
+ 	}
+ 
++	/*
++	 * nikel: SHIFT's Oreo ccci_mdinit stops ("parsing ccci_drv_ver fail,
++	 * exit") unless this line is present. Same rule as later MTK kernels:
++	 * V2 for the ECCCI FSM driver (port version 6), V1 otherwise.
++	 */
++	if (ccci_port_ver == 6)
++		actual_write = snprintf(&buf[curr], 4096 - curr, "[ccci_drv_ver]:V2\n");
++	else
++		actual_write = snprintf(&buf[curr], 4096 - curr, "[ccci_drv_ver]:V1\n");
++	curr += actual_write;
++
+ 	/* Add total size to tail */
+ 	actual_write = snprintf(&buf[curr], 4096 - curr, "total:%d\n", curr);
+ 	curr += actual_write;

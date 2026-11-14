@@ -1,0 +1,58 @@
+diff --git a/drivers/misc/mediatek/cmdq/v2/Makefile b/drivers/misc/mediatek/cmdq/v2/Makefile
+index 6111e7f2..38484f79 100644
+--- a/drivers/misc/mediatek/cmdq/v2/Makefile
++++ b/drivers/misc/mediatek/cmdq/v2/Makefile
+@@ -111,6 +111,7 @@ obj-y += cmdq_core.o
+ obj-y += cmdq_virtual.o
+ obj-y += cmdq_device.o
+ obj-y += cmdq_driver.o
++obj-y += cmdq_mdp_meta.o
+ obj-y += cmdq_mmp.o
+ obj-y += cmdq_mdp_common.o
+ obj-y += cmdq_prof.o
+diff --git a/drivers/misc/mediatek/cmdq/v2/cmdq_driver.c b/drivers/misc/mediatek/cmdq/v2/cmdq_driver.c
+index 5048d6f1..e99a6a49 100644
+--- a/drivers/misc/mediatek/cmdq/v2/cmdq_driver.c
++++ b/drivers/misc/mediatek/cmdq/v2/cmdq_driver.c
+@@ -19,6 +19,7 @@
+ #include "cmdq_mdp_common.h"
+ #include "cmdq_device.h"
+ #include "cmdq_sec.h"
++#include "cmdq_mdp_meta.h"
+ 
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -183,6 +184,9 @@ static int cmdq_release(struct inode *pInode, struct file *pFile)
+ 	/* scan through tasks that created by this file node and release them */
+ 	cmdq_core_release_task_by_file_node((void *)pNode);
+ 
++	/* readback slots of the op_meta interface owned by this file */
++	cmdq_mdp_meta_release(pFile);
++
+ 	if (NULL != pFile->private_data) {
+ 		kfree(pFile->private_data);
+ 		pFile->private_data = NULL;
+@@ -815,6 +819,9 @@ static long cmdq_ioctl(struct file *pFile, unsigned int code, unsigned long para
+ 		} while (0);
+ 		break;
+ 	default:
++		/* op_meta jobs from newer libdpframework (ioctls 20-24) */
++		if (cmdq_mdp_meta_is_ioctl(code))
++			return cmdq_mdp_meta_ioctl(pFile, code, param);
+ 		CMDQ_ERR("unrecognized ioctl 0x%08x\n", code);
+ 		return -ENOIOCTLCMD;
+ 	}
+@@ -842,6 +849,13 @@ static long cmdq_ioctl_compat(struct file *pFile, unsigned int code, unsigned lo
+ 	case CMDQ_IOCTL_UNLOCK_MUTEX:
+ 		CMDQ_ERR("[COMPAT]deprecated ioctl 0x%08x\n", code);
+ 		return -ENOIOCTLCMD;
++	case CMDQ_IOCTL_ASYNC_EXEC:
++	case CMDQ_IOCTL_ASYNC_WAIT:
++	case CMDQ_IOCTL_ALLOC_READBACK_SLOTS:
++	case CMDQ_IOCTL_FREE_READBACK_SLOTS:
++	case CMDQ_IOCTL_READ_READBACK_SLOTS:
++		/* same layout for 32- and 64-bit callers */
++		return cmdq_mdp_meta_ioctl(pFile, code, param);
+ 	default:
+ 		CMDQ_ERR("[COMPAT]unrecognized ioctl 0x%08x\n", code);
+ 		return -ENOIOCTLCMD;

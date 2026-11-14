@@ -1,0 +1,18 @@
+diff --git a/drivers/misc/mediatek/sensors-1.0/alsps/Kconfig b/drivers/misc/mediatek/sensors-1.0/alsps/Kconfig
+index 9c20836..6601032 100644
+--- a/drivers/misc/mediatek/sensors-1.0/alsps/Kconfig
++++ b/drivers/misc/mediatek/sensors-1.0/alsps/Kconfig
+@@ -22,3 +22,4 @@ source "drivers/misc/mediatek/sensors-1.0/alsps/cm36686/Kconfig"
+ source "drivers/misc/mediatek/sensors-1.0/alsps/epl2182/Kconfig"
+ source "drivers/misc/mediatek/sensors-1.0/alsps/APDS9930/Kconfig"
+ source "drivers/misc/mediatek/sensors-1.0/alsps/stk3x1x-new/Kconfig"
++source "drivers/misc/mediatek/sensors-1.0/alsps/ltr579/Kconfig"
+diff --git a/drivers/misc/mediatek/sensors-1.0/alsps/Makefile b/drivers/misc/mediatek/sensors-1.0/alsps/Makefile
+index 2ff8b81..40d02cc 100644
+--- a/drivers/misc/mediatek/sensors-1.0/alsps/Makefile
++++ b/drivers/misc/mediatek/sensors-1.0/alsps/Makefile
+@@ -11,3 +11,4 @@ obj-$(CONFIG_MTK_CM36686)	+=  cm36686/
+ obj-$(CONFIG_MTK_EPL2182)	+=  epl2182/
+ obj-$(CONFIG_MTK_APDS9930)	+=  APDS9930/
+ obj-$(CONFIG_MTK_STK3X1X_NEW)	+=  stk3x1x-new/
++obj-$(CONFIG_MTK_LTR579)	+=  ltr579/

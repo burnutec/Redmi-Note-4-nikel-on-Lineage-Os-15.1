@@ -1,0 +1,97 @@
+diff --git a/drivers/misc/mediatek/video/mt6797/videox/mtk_disp_mgr.c b/drivers/misc/mediatek/video/mt6797/videox/mtk_disp_mgr.c
+index c5f278b..a75173d 100644
+--- a/drivers/misc/mediatek/video/mt6797/videox/mtk_disp_mgr.c
++++ b/drivers/misc/mediatek/video/mt6797/videox/mtk_disp_mgr.c
+@@ -1453,6 +1453,78 @@ int _ioctl_get_display_caps(unsigned long arg)
+ 	return ret;
+ }
+ 
++/*
++ * nikel: SHIFT's ShiftOS 8.1 hwcomposer.mt6797.so was built against a newer
++ * display ABI than this published kernel. It asks for a 140-byte caps struct
++ * (resizer list of 8 x 3 entries + extra fields), passes a 1528-byte
++ * SET_INPUT_BUFFER struct (72 extra bytes at the end) and has a refresh
++ * request thread on ioctl 227. Layout taken from the blob's queryCapsInfo().
++ */
++struct nikel_disp_caps_v2 {
++	int output_mode;
++	int output_pass;
++	unsigned int max_layer_num;
++	unsigned int disp_feature;
++	int is_support_frame_cfg_ioctl;
++	int is_output_rotated;
++	int lcm_degree;
++	unsigned int rsz_in_res_list[8][3];
++	unsigned int rsz_list_length;
++	unsigned int rsz_in_max[2];
++	unsigned int is_support_three_session;
++};
++#define NIKEL_IOCTL_GET_DISPLAY_CAPS_V2	_IOW('O', 219, struct nikel_disp_caps_v2)
++#define NIKEL_IOCTL_SET_INPUT_BUFFER_V2	_IOC(_IOC_WRITE, 'O', 206, 1528)
++#define NIKEL_IOCTL_WAIT_REFRESH_REQ	_IOW('O', 227, unsigned int)
++
++static DECLARE_WAIT_QUEUE_HEAD(nikel_refresh_wq);
++
++static int nikel_ioctl_get_display_caps_v2(unsigned long arg)
++{
++	struct nikel_disp_caps_v2 caps;
++	void __user *argp = (void __user *)arg;
++
++	BUILD_BUG_ON(sizeof(struct nikel_disp_caps_v2) != 140);
++	memset(&caps, 0, sizeof(caps));
++#ifdef DISP_HW_MODE_CAP
++	caps.output_mode = DISP_HW_MODE_CAP;
++#else
++	caps.output_mode = DISP_OUTPUT_CAP_DIRECT_LINK;
++#endif
++#ifdef DISP_HW_PASS_MODE
++	caps.output_pass = DISP_HW_PASS_MODE;
++#else
++	caps.output_pass = DISP_OUTPUT_CAP_SINGLE_PASS;
++#endif
++#ifdef DISP_HW_MAX_LAYER
++	caps.max_layer_num = DISP_HW_MAX_LAYER;
++#else
++	caps.max_layer_num = 4;
++#endif
++	caps.is_support_frame_cfg_ioctl = 1;
++#ifdef CONFIG_MTK_LCM_PHYSICAL_ROTATION_HW
++	caps.is_output_rotated = 1;
++#endif
++	if (primary_display_partial_support())
++		caps.disp_feature |= DISP_FEATURE_PARTIAL;
++	if (disp_helper_get_option(DISP_OPT_HRT))
++		caps.disp_feature |= DISP_FEATURE_HRT;
++	/* no resizer list: DISP_FEATURE_RSZ stays off, rsz_list_length = 0 */
++
++	DISPMSG("nikel: caps v2 mode:%d pass:%d layers:%d feature:0x%x\n",
++		caps.output_mode, caps.output_pass, caps.max_layer_num, caps.disp_feature);
++	if (copy_to_user(argp, &caps, sizeof(caps)))
++		return -EFAULT;
++	return 0;
++}
++
++static int nikel_ioctl_wait_refresh_req(unsigned long arg)
++{
++	/* This kernel never asks for a refresh: sleep until the caller is
++	 * signalled, instead of letting its thread spin on an error. */
++	return wait_event_interruptible(nikel_refresh_wq, 0);
++}
++
+ int _ioctl_wait_vsync(unsigned long arg)
+ {
+ 	int ret = 0;
+@@ -1688,6 +1760,13 @@ long mtk_disp_mgr_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		{
+ 			return _ioctl_get_display_caps(arg);
+ 		}
++	case NIKEL_IOCTL_GET_DISPLAY_CAPS_V2:
++		return nikel_ioctl_get_display_caps_v2(arg);
++	case NIKEL_IOCTL_SET_INPUT_BUFFER_V2:
++		/* same layout as ours, plus 72 trailing bytes we do not use */
++		return _ioctl_set_input_buffer(arg);
++	case NIKEL_IOCTL_WAIT_REFRESH_REQ:
++		return nikel_ioctl_wait_refresh_req(arg);
+ 	case DISP_IOCTL_SET_VSYNC_FPS:
+ 		{
+ 			return _ioctl_set_vsync(arg);

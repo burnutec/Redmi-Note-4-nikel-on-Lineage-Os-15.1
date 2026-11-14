@@ -1,0 +1,27 @@
+--- a/drivers/leds/Kconfig
++++ b/drivers/leds/Kconfig
+@@ -505,6 +505,13 @@
+ 	  This option enabled support for the LEDs on the ARM Versatile
+ 	  and RealView boards. Say Y to enabled these.
+ 
++config LEDS_NIKEL_BUTTON
++	bool "Redmi Note 4 MTK (nikel) capacitive key backlight"
++	depends on LEDS_CLASS && PINCTRL
++	help
++	  On/off backlight of the capacitive keys, a GPIO switched through
++	  pinctrl states. Registers the LED "button-backlight".
++
+ comment "LED Triggers"
+ source "drivers/leds/trigger/Kconfig"
+ 
+--- a/drivers/leds/Makefile
++++ b/drivers/leds/Makefile
+@@ -57,6 +57,8 @@
+ obj-$(CONFIG_LEDS_VERSATILE)		+= leds-versatile.o
+ obj-$(CONFIG_LEDS_MENF21BMC)		+= leds-menf21bmc.o
+ 
++obj-$(CONFIG_LEDS_NIKEL_BUTTON)		+= leds-nikel-button.o
++
+ # LED SPI Drivers
+ obj-$(CONFIG_LEDS_DAC124S085)		+= leds-dac124s085.o
+ 

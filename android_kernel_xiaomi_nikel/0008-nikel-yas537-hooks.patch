@@ -1,0 +1,18 @@
+diff --git a/drivers/misc/mediatek/sensors-1.0/magnetometer/Kconfig b/drivers/misc/mediatek/sensors-1.0/magnetometer/Kconfig
+index fcbf7bd..519af56 100644
+--- a/drivers/misc/mediatek/sensors-1.0/magnetometer/Kconfig
++++ b/drivers/misc/mediatek/sensors-1.0/magnetometer/Kconfig
+@@ -19,3 +19,4 @@ source "drivers/misc/mediatek/sensors-1.0/magnetometer/maghub/Kconfig"
+ source "drivers/misc/mediatek/sensors-1.0/magnetometer/akm09915/Kconfig"
+ source "drivers/misc/mediatek/sensors-1.0/magnetometer/akm09911/Kconfig"
+ source "drivers/misc/mediatek/sensors-1.0/magnetometer/akm8963/Kconfig"
++source "drivers/misc/mediatek/sensors-1.0/magnetometer/yas537/Kconfig"
+diff --git a/drivers/misc/mediatek/sensors-1.0/magnetometer/Makefile b/drivers/misc/mediatek/sensors-1.0/magnetometer/Makefile
+index 4dccf6f..cb5d087 100644
+--- a/drivers/misc/mediatek/sensors-1.0/magnetometer/Makefile
++++ b/drivers/misc/mediatek/sensors-1.0/magnetometer/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_MTK_MAGHUB)        +=  maghub/
+ obj-$(CONFIG_MTK_AKM09915_NEW)         +=  akm09915/
+ obj-$(CONFIG_MTK_AKM09911)         +=  akm09911/
+ obj-$(CONFIG_MTK_AKM8963)	+=  akm8963/
++obj-$(CONFIG_MTK_YAS537)	+=  yas537/

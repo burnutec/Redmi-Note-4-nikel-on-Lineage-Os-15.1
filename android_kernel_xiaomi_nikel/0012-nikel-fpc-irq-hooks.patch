@@ -1,0 +1,27 @@
+diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
+index 53087932..89fc5ec9 100644
+--- a/drivers/input/misc/Kconfig
++++ b/drivers/input/misc/Kconfig
+@@ -745,4 +745,13 @@ config INPUT_SX9310
+ 	  Say Y to enable the SAR detection application, if N here not to use the 
+ 	  this SAR sensor
+ 	  
++config INPUT_NIKEL_FPC_IRQ
++	bool "nikel FPC1145 fingerprint (TEE) interrupt/reset/clock helper"
++	depends on SPI && OF
++	default n
++	help
++	  Redmi Note 4 MTK (nikel): sysfs interface for MIUI's FPC fingerprint
++	  library (irq, wakeup_enable, reset) and the SPI1 clock for the
++	  Trustonic trusted app that reads the sensor.
++
+ endif
+diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
+index e3fe96e6..14ddffdc 100644
+--- a/drivers/input/misc/Makefile
++++ b/drivers/input/misc/Makefile
+@@ -73,3 +73,4 @@ obj-$(CONFIG_INPUT_IDEAPAD_SLIDEBAR)	+= ideapad_slidebar.o
+ 
+ #pxs_add
+ obj-$(CONFIG_INPUT_SX9310)		+= sx9310.o
++obj-$(CONFIG_INPUT_NIKEL_FPC_IRQ)	+= nikel_fpc_irq.o

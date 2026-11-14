@@ -1,0 +1,48 @@
+diff --git a/drivers/misc/mediatek/sensors-1.0/accelerometer/Kconfig b/drivers/misc/mediatek/sensors-1.0/accelerometer/Kconfig
+index 067759a..413afcf 100644
+--- a/drivers/misc/mediatek/sensors-1.0/accelerometer/Kconfig
++++ b/drivers/misc/mediatek/sensors-1.0/accelerometer/Kconfig
+@@ -18,6 +18,7 @@ config CUSTOM_KERNEL_ACCELEROMETER
+ 
+ source "drivers/misc/mediatek/sensors-1.0/accelerometer/accelhub/Kconfig"
+ source "drivers/misc/mediatek/sensors-1.0/accelerometer/bmi160-spi/Kconfig"
++source "drivers/misc/mediatek/sensors-1.0/accelerometer/bmi160-i2c/Kconfig"
+ source "drivers/misc/mediatek/sensors-1.0/accelerometer/mc3410-i2c/Kconfig"
+ source "drivers/misc/mediatek/sensors-1.0/accelerometer/mpu6515/Kconfig"
+ source "drivers/misc/mediatek/sensors-1.0/accelerometer/bma222e/Kconfig"
+diff --git a/drivers/misc/mediatek/sensors-1.0/accelerometer/Makefile b/drivers/misc/mediatek/sensors-1.0/accelerometer/Makefile
+index 57b5852..c74f8af 100644
+--- a/drivers/misc/mediatek/sensors-1.0/accelerometer/Makefile
++++ b/drivers/misc/mediatek/sensors-1.0/accelerometer/Makefile
+@@ -6,6 +6,7 @@ obj-y   +=  accel.o accel_factory.o
+ 
+ obj-$(CONFIG_MTK_ACCELHUB)		+=	accelhub/
+ obj-$(CONFIG_MTK_BMI160_SPI)   +=  bmi160-spi/
++obj-$(CONFIG_MTK_BMI160_I2C)   +=  bmi160-i2c/
+ obj-$(CONFIG_MTK_MC3410_I2C) += mc3410-i2c/
+ obj-$(CONFIG_MTK_MPU6515A)		+= mpu6515/
+ obj-$(CONFIG_MTK_BMA222E)		+= bma222e/
+diff --git a/drivers/misc/mediatek/sensors-1.0/gyroscope/Kconfig b/drivers/misc/mediatek/sensors-1.0/gyroscope/Kconfig
+index 474e42f..35e651c 100644
+--- a/drivers/misc/mediatek/sensors-1.0/gyroscope/Kconfig
++++ b/drivers/misc/mediatek/sensors-1.0/gyroscope/Kconfig
+@@ -9,6 +9,7 @@ config CUSTOM_KERNEL_GYROSCOPE
+ 
+ source "drivers/misc/mediatek/sensors-1.0/gyroscope/gyrohub/Kconfig"
+ source "drivers/misc/mediatek/sensors-1.0/gyroscope/bmi160gy-spi/Kconfig"
++source "drivers/misc/mediatek/sensors-1.0/gyroscope/bmi160gy-i2c/Kconfig"
+ source "drivers/misc/mediatek/sensors-1.0/gyroscope/ITG1010/Kconfig"
+ source "drivers/misc/mediatek/sensors-1.0/gyroscope/mpu6515/Kconfig"
+ source "drivers/misc/mediatek/sensors-1.0/gyroscope/mpu6050gy/Kconfig"
+diff --git a/drivers/misc/mediatek/sensors-1.0/gyroscope/Makefile b/drivers/misc/mediatek/sensors-1.0/gyroscope/Makefile
+index 49b1041..5f57044 100644
+--- a/drivers/misc/mediatek/sensors-1.0/gyroscope/Makefile
++++ b/drivers/misc/mediatek/sensors-1.0/gyroscope/Makefile
+@@ -6,6 +6,7 @@ obj-y   +=  gyroscope.o gyro_factory.o
+ 
+ obj-$(CONFIG_MTK_GYROHUB)      +=  gyrohub/
+ obj-$(CONFIG_MTK_BMI160_SPI)   +=  bmi160gy-spi/
++obj-$(CONFIG_MTK_BMI160GY_I2C)   +=  bmi160gy-i2c/
+ obj-$(CONFIG_MTK_ITG1010)   +=  ITG1010/
+ obj-$(CONFIG_MTK_MPU6515G)	+= mpu6515/
+ obj-$(CONFIG_MTK_MPU6050GY)   +=  mpu6050gy/

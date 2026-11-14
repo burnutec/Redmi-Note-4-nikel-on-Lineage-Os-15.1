@@ -1,0 +1,43 @@
+diff --git a/drivers/misc/mediatek/imgsensor/src/mt6797/Makefile b/drivers/misc/mediatek/imgsensor/src/mt6797/Makefile
+index a2ee5098..8e9bd839 100644
+--- a/drivers/misc/mediatek/imgsensor/src/mt6797/Makefile
++++ b/drivers/misc/mediatek/imgsensor/src/mt6797/Makefile
+@@ -33,6 +33,11 @@ ARCH_MTK_PROJECT := $(subst ",,$(CONFIG_ARCH_MTK_PROJECT))
+ 
+ obj-y				+= kd_sensorlist.o
+ 
++# nikel: kernel sensor list in the camera HAL's order
++ifeq ($(ARCH_MTK_PROJECT),nikel)
++ccflags-y += -DNIKEL_SENSOR_LIST
++endif
++
+ $(info -= project path  $(srctree)/drivers/misc/mediatek/imgsensor/src/$(MTK_PLATFORM)/camera_project/$(ARCH_MTK_PROJECT)/ =-)
+ 
+ ifneq ($(wildcard $(srctree)/drivers/misc/mediatek/imgsensor/src/$(MTK_PLATFORM)/camera_project/$(ARCH_MTK_PROJECT)/camera_hw),)
+diff --git a/drivers/misc/mediatek/imgsensor/src/mt6797/kd_sensorlist.h b/drivers/misc/mediatek/imgsensor/src/mt6797/kd_sensorlist.h
+index 55ed460c..8110f3e7 100644
+--- a/drivers/misc/mediatek/imgsensor/src/mt6797/kd_sensorlist.h
++++ b/drivers/misc/mediatek/imgsensor/src/mt6797/kd_sensorlist.h
+@@ -155,6 +155,14 @@ UINT32 T8EV5_YUV_SensorInit(PSENSOR_FUNCTION_STRUCT *pfFunc);
+ //! 2. This file should be the same as mediatek\custom\common\hal\imgsensor\src\sensorlist.cpp
++#if defined(NIKEL_SENSOR_LIST)
++UINT32 NIKEL_SLOT_SensorInit(PSENSOR_FUNCTION_STRUCT *pfFunc);
++#endif
++
+ ACDK_KD_SENSOR_INIT_FUNCTION_STRUCT kdSensorList[MAX_NUM_OF_SUPPORT_SENSOR+1] =
+ {
++#if defined(NIKEL_SENSOR_LIST)
++/* nikel: fixed order matching the camera HAL, see nikel_sensorlist.h */
++#include "nikel_sensorlist.h"
++#else
+ /*IMX*/
+ #if defined(IMX398_MIPI_RAW)
+ 	{IMX398_SENSOR_ID, SENSOR_DRVNAME_IMX398_MIPI_RAW, IMX398_MIPI_RAW_SensorInit},
+@@ -528,6 +536,7 @@ ACDK_KD_SENSOR_INIT_FUNCTION_STRUCT kdSensorList[MAX_NUM_OF_SUPPORT_SENSOR+1] =
+ #endif
+ 
+ /*  ADD sensor driver before this line */
++#endif /* NIKEL_SENSOR_LIST */
+     {0,{0},NULL}, //end of list
+ };
+ //e_add new sensor driver here
