@@ -1,0 +1,9 @@
+
+config MTK_YAS537
+	bool "Yamaha YAS537 magnetometer (nikel)"
+	depends on CUSTOM_KERNEL_MAGNETOMETER
+	default n
+	help
+	  Yamaha YAS537 (MS-3T) compass on I2C, as used on the
+	  Redmi Note 4 MTK (nikel). Polled by the MediaTek mag
+	  framework, with a simple hard-iron calibration in the driver.

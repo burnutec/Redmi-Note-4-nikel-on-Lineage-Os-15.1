@@ -1,0 +1,7 @@
+config MTK_BMI160GY_I2C
+	bool "BMI160 gyroscope on I2C (nikel)"
+	depends on MTK_BMI160_I2C
+	default n
+	help
+	  Gyroscope part of the Bosch BMI160 on I2C (nikel). Uses the
+	  register access of MTK_BMI160_I2C.
