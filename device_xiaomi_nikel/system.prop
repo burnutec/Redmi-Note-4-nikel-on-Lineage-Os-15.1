@@ -185,9 +185,3 @@ ril.mux.debuglog.enable=0
 
 # nikel: the MTK sensor HAL lists a pressure sensor (type 6) the phone does not have
 ro.sensors.hidden_types=6
-
-# nikel: lens shading has no sensor crop window yet (crop comes back 0x0), which
-# crashes TSF and stalls the ISP on the shading DMA. Both are read per frame by
-# libcam.hal3a.v3 (Paramctrl::prepareHw_PerFrame_LSC). Remove once crop is fixed.
-debug.lsc_mgr.manual_tsf=0
-debug.lsc_mgr.enable=0
